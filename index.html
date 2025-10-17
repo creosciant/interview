@@ -7,10 +7,29 @@
         <style>
             body {
                 font: 'Arial';
-                background-color: peachpuff;
                 justify-content: center;
                 align-items: center;
                 display: grid;
+                margin: 0;
+                padding: 0;
+                min-height: 100vh;
+            }
+
+            li {
+                margin: 10px 0;
+            }
+
+            body.day {
+                background-color: peachpuff;
+            }
+
+            body.night {
+                background-color: darkslateblue;
+            }
+
+            .day-page, .night-page {
+                padding: 20px;
+                min-height: 100vh;
             }
 
             .button {
@@ -22,6 +41,7 @@
                 justify-content: center;
                 align-items: center;
                 display: flex;
+                cursor: pointer;
             }
 
             .bar {
@@ -43,55 +63,99 @@
                 border-radius: 5px;
                 justify-content: right;
                 align-items: right;
+                cursor: pointer;
+                margin-left: 10px;
+            }
+
+            .list-content {
+                padding: 12px 24px;
+                background-color: none;
+                color: black;
+                border: black;
+                border-radius: 5px;
+                justify-content: right;
+                align-items: right;
                 display: flex;
             }
 
-            .night-mode {
+            .mode-toggle {
+                position: fixed;
+                top: 20px;
+                right: 20px;
                 padding: 12px 24px;
+                border: none;
+                border-radius: 5px;
+                justify-content: right;
+                align-items: right;
+                display: flex;
+                cursor: pointer;
+                z-index: 1000;
+                text-decoration: none;      
+            }
+
+            .night-mode-btn {
                 background-color: darkblue;
                 color: white;
-                border: none;
-                border-radius: 5px;
-                justify-content: right;
-                align-items: right;
-                display: flex;
+               
             }
 
-            .day-mode {
-                padding: 12px 24px;
-                background-color: white;
+            .day-mode-btn {
+                background-color: palegoldenrod;
                 color: black;
                 border: none;
-                border-radius: 5px;
-                justify-content: right;
-                align-items: right;
-                display: flex;
             }
 
         </style>
     </head>
 
     <body>
+        <div class="day-page" id="daypage">
+            <h1 style="color: aqua">TO-DO LIST</h1>
 
-        <h1 style="color: aqua">TO-DO LIST</h1>
+            <input class="bar" id="input-day" placeholder="Enter task..." required> <p></p>
+            <button class="button" onclick="displayText('day')">
+                Add
+            </button>
 
-        <input class="bar" id="input" placeholder="Enter task..." required> <p></p>
-        <button class="button" onclick="displayText()">
-            Add
-        </button>
+            <a href="#" class="mode-toggle night-mode-btn" id="nightmode">
+                Night mode
+            </a>
 
-        <ol id="list">
-        </ol>
+            <ol id="list-day">
+            </ol>
+        </div>
+
+        <div class="night-page" id="nightpage">
+            <h1 style="color: aqua">TO-DO LIST</h1>
+
+            <input class="bar" id="input-night" placeholder="Enter task..." required> <p></p>
+            <button class="button" onclick="displayText('night')">
+                Add
+            </button>
+
+            <a href="#" class="mode-toggle day-mode-btn" id="daymode">
+                Day mode
+            </a>
+
+            <ol id="list-night">
+            </ol>
+        </div>
 
         <script>
             const arr = new Array();
-            const list = document.getElementById('list');
 
-            function displayText() {
-                var input = document.getElementById('input').value;
+            function displayText(mode) {
+                var inputId;
+                if (mode === 'day') {
+                    inputId = 'input-day';
+                } else {
+                    inputId = 'input-night';
+                }
+
+                var input = document.getElementById(inputId).value;
                 arr.push(input);
                 updateText();
-                document.getElementById('input').value = '';
+                document.getElementById(inputId).value = '';
             }
 
             function updateText() {
@@ -100,13 +164,37 @@
                     listHTML += "<li>" + arr[i] + "</li><button class='delete' onclick='deleteNum(" + i + ")'>Delete</button>";
                 }
 
-                document.getElementById('list').innerHTML = listHTML;
+                document.getElementById('list-day').innerHTML = listHTML;
+                document.getElementById('list-night').innerHTML = listHTML;
             }
 
             function deleteNum(index) {
                 arr.splice(index, 1);
                 updateText();
             }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const nightmode = document.getElementById('nightmode');
+                const nightpage = document.getElementById('nightpage');
+                const daymode = document.getElementById('daymode');
+                const daypage = document.getElementById('daypage');
+
+                nightmode.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    daypage.style.display = 'none';
+                    nightpage.style.display = 'block';
+                    document.body.className = 'night';
+                });
+
+                daymode.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    daypage.style.display = 'block';
+                    nightpage.style.display = 'none';
+                    document.body.className = 'day';
+                });
+            });
         </script>
     </body>
 </html>
