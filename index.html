@@ -32,6 +32,16 @@
                 min-height: 100vh;
             }
 
+            .wrapper {
+                padding: 12px 24px;
+                background-color: lightgray;
+                border: none;
+                border-radius: 5px;
+                justify-content: left;
+                align-items: left;
+                position: relative;
+            }
+
             .button {
                 padding: 1vh 1vw;
                 background-color: blue;
@@ -161,7 +171,7 @@
             function updateText() {
                 var listHTML = "";
                 for (var i = 0; i < arr.length; i++) {
-                    listHTML += "<li>" + arr[i] + "</li><button class='delete' onclick='deleteNum(" + i + ")'>Delete</button>";
+                    listHTML += "<p></p><div class='wrapper'><li>" + arr[i] + "</li><button class='delete' onclick='deleteNum(" + i + ")'>Delete</button></div>";
                 }
 
                 document.getElementById('list-day').innerHTML = listHTML;
