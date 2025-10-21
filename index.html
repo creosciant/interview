@@ -40,6 +40,15 @@
                 justify-content: left;
                 align-items: left;
                 position: relative;
+                cursor: grab;
+            }
+
+            .wrapper:active {
+                cursor: grabbing;
+            }
+
+            .wrapper.dragging {
+                opacity: 0.5;
             }
 
             .button {
@@ -153,6 +162,33 @@
 
         <script>
             const arr = new Array();
+            let draggedItem = null;
+
+            function handleDragStart(e) {
+                draggedItem = e.target;
+                e.dataTransfer.effectAllowed = 'move';
+            }
+
+            function handleDragOver(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            }
+
+            function handleDrop(e) {
+                e.preventDefault();
+                const dropTarget = e.target.closest('.wrapper');
+
+                if (dropTarget && draggedItem !== dropTarget) {
+                    const fromIndex = parseInt(draggedItem.dataset.index);
+                    const toIndex = parseInt(dropTarget.dataset.index);
+
+                    const item = arr.splice(fromIndex, 1)[0];
+                    arr.splice(toIndex, 0, item);
+
+                    updateText();
+                }
+                draggedItem = null;
+            }
 
             function displayText(mode) {
                 var inputId;
@@ -171,11 +207,19 @@
             function updateText() {
                 var listHTML = "";
                 for (var i = 0; i < arr.length; i++) {
-                    listHTML += "<p></p><div class='wrapper'><li>" + arr[i] + "</li><button class='delete' onclick='deleteNum(" + i + ")'>Delete</button></div>";
+                    listHTML += "<p></p><div class='wrapper' draggable='true' data-index='" + i + "'><li>" + arr[i] + "</li><button class='delete' onclick='deleteNum(" + i + ")'>Delete</button></div>";
                 }
 
                 document.getElementById('list-day').innerHTML = listHTML;
                 document.getElementById('list-night').innerHTML = listHTML;
+
+                const wrappers = document.querySelectorAll('.wrapper');
+                wrappers.forEach(wrapper => {
+                    wrapper.addEventListener('dragstart', handleDragStart);
+                    wrapper.addEventListener('dragover', handleDragOver);
+                    wrapper.addEventListener('drop', handleDrop);
+                    wrapper.addEventListener('dragenter', (e) => e.preventDefault())
+                });
             }
 
             function deleteNum(index) {
